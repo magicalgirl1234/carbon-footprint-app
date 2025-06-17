@@ -1,11 +1,12 @@
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import CarbonInputForm from "@/components/CarbonInputForm";
 import CarbonResults from "@/components/CarbonResults";
 import CarbonTips from "@/components/CarbonTips";
-import { Leaf, Calculator, TrendingDown } from "lucide-react";
+import CarbonOffsets from "@/components/CarbonOffsets";
+import CarbonBadges from "@/components/CarbonBadges";
+import { Leaf, Calculator, TrendingDown, TreePine, Trophy } from "lucide-react";
 
 export interface CarbonData {
   electricity: number;
@@ -59,7 +60,7 @@ const Index = () => {
         {/* Main Content */}
         <div className="max-w-6xl mx-auto">
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 mb-8">
+            <TabsList className="grid w-full grid-cols-5 mb-8">
               <TabsTrigger value="calculator" className="flex items-center gap-2">
                 <Calculator className="h-4 w-4" />
                 Calculator
@@ -71,6 +72,14 @@ const Index = () => {
               <TabsTrigger value="tips" className="flex items-center gap-2">
                 <Leaf className="h-4 w-4" />
                 Tips
+              </TabsTrigger>
+              <TabsTrigger value="offsets" className="flex items-center gap-2">
+                <TreePine className="h-4 w-4" />
+                Offsets
+              </TabsTrigger>
+              <TabsTrigger value="badges" className="flex items-center gap-2">
+                <Trophy className="h-4 w-4" />
+                Badges
               </TabsTrigger>
             </TabsList>
 
@@ -98,6 +107,14 @@ const Index = () => {
 
             <TabsContent value="tips" className="space-y-6">
               <CarbonTips carbonData={carbonData} />
+            </TabsContent>
+
+            <TabsContent value="offsets" className="space-y-6">
+              <CarbonOffsets carbonData={carbonData} />
+            </TabsContent>
+
+            <TabsContent value="badges" className="space-y-6">
+              <CarbonBadges carbonData={carbonData} />
             </TabsContent>
           </Tabs>
         </div>
