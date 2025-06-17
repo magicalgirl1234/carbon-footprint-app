@@ -3,7 +3,8 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, TrendingDown, Zap, Car, Utensils } from "lucide-react";
+import { TrendingUp, TrendingDown, Zap, Car, Utensils, ChartPie } from "lucide-react";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
 import { CarbonData } from "@/pages/Index";
 import { calculateCarbonFootprint, formatCO2, getFootprintComparison, US_AVERAGE_FOOTPRINT } from "@/utils/carbonCalculations";
 
@@ -31,6 +32,7 @@ const CarbonResults: React.FC<CarbonResultsProps> = ({ carbonData }) => {
       icon: Zap,
       color: 'bg-yellow-500',
       textColor: 'text-yellow-700',
+      chartColor: '#EAB308',
     },
     {
       name: 'Transportation',
@@ -38,6 +40,7 @@ const CarbonResults: React.FC<CarbonResultsProps> = ({ carbonData }) => {
       icon: Car,
       color: 'bg-blue-500',
       textColor: 'text-blue-700',
+      chartColor: '#3B82F6',
     },
     {
       name: 'Food',
@@ -45,10 +48,45 @@ const CarbonResults: React.FC<CarbonResultsProps> = ({ carbonData }) => {
       icon: Utensils,
       color: 'bg-green-500',
       textColor: 'text-green-700',
+      chartColor: '#10B981',
     },
   ];
 
+  const pieData = categoryData.map(category => ({
+    name: category.name,
+    value: Math.round(category.value),
+    color: category.chartColor,
+  })).filter(item => item.value > 0);
+
+  const detailedPieData = [
+    { name: 'Electricity', value: Math.round(results.categories.electricity), color: '#FCD34D' },
+    { name: 'Natural Gas', value: Math.round(results.categories.gas), color: '#F59E0B' },
+    { name: 'Car Travel', value: Math.round(results.categories.carMiles), color: '#60A5FA' },
+    { name: 'Public Transport', value: Math.round(results.categories.publicTransport), color: '#3B82F6' },
+    { name: 'Flights', value: Math.round(results.categories.flights), color: '#1E40AF' },
+    { name: 'Beef', value: Math.round(results.categories.beef), color: '#DC2626' },
+    { name: 'Other Meat', value: Math.round(results.categories.pork + results.categories.chicken + results.categories.fish), color: '#16A34A' },
+    { name: 'Dairy', value: Math.round(results.categories.dairy), color: '#84CC16' },
+    { name: 'Vegetables', value: Math.round(results.categories.vegetables), color: '#22C55E' },
+  ].filter(item => item.value > 0);
+
   const maxCategory = Math.max(results.energy, results.transportation, results.food);
+
+  const CustomTooltip = ({ active, payload }: any) => {
+    if (active && payload && payload.length) {
+      const data = payload[0];
+      return (
+        <div className="bg-white p-3 border border-gray-300 rounded-lg shadow-lg">
+          <p className="font-medium">{data.name}</p>
+          <p className="text-sm text-gray-600">{formatCO2(data.value)} CO₂</p>
+          <p className="text-xs text-gray-500">
+            {((data.value / results.total) * 100).toFixed(1)}% of total
+          </p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   return (
     <div className="space-y-6">
@@ -77,6 +115,78 @@ const CarbonResults: React.FC<CarbonResultsProps> = ({ carbonData }) => {
           </div>
         </CardHeader>
       </Card>
+
+      {/* Pie Charts */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ChartPie className="h-5 w-5" />
+              Category Breakdown
+            </CardTitle>
+            <CardDescription>Your emissions by main category</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={pieData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={100}
+                    fill="#8884d8"
+                    dataKey="value"
+                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                    labelLine={false}
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <ChartPie className="h-5 w-5" />
+              Detailed Breakdown
+            </CardTitle>
+            <CardDescription>Your emissions by specific source</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={detailedPieData}
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {detailedPieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip content={<CustomTooltip />} />
+                  <Legend 
+                    verticalAlign="bottom" 
+                    height={36}
+                    formatter={(value) => <span className="text-xs">{value}</span>}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
       {/* Category Breakdown */}
       <Card>
