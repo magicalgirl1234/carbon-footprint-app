@@ -38,6 +38,10 @@ const Index = () => {
 
   const [activeTab, setActiveTab] = useState("calculator");
 
+  const handleCalculate = () => {
+    setActiveTab("results");
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50">
       <div className="container mx-auto px-4 py-8">
@@ -79,7 +83,11 @@ const Index = () => {
                   </CardDescription>
                 </CardHeader>
                 <CardContent>
-                  <CarbonInputForm carbonData={carbonData} setCarbonData={setCarbonData} />
+                  <CarbonInputForm 
+                    carbonData={carbonData} 
+                    setCarbonData={setCarbonData}
+                    onCalculate={handleCalculate}
+                  />
                 </CardContent>
               </Card>
             </TabsContent>
@@ -94,9 +102,14 @@ const Index = () => {
           </Tabs>
         </div>
 
-        {/* Footer */}
-        <div className="text-center mt-12 text-gray-500">
-          <p>Help reduce your carbon footprint • Make a difference for our planet</p>
+        {/* Copyright Footer */}
+        <div className="text-center mt-16 pt-8 border-t border-gray-200">
+          <div className="space-y-2">
+            <p className="text-gray-600">Made by <span className="font-semibold text-green-700">Bhargavi Battula</span></p>
+            <p className="text-gray-500 text-sm">bhargavibattula1234@gmail.com</p>
+            <p className="text-gray-500 text-sm">© 2024 Carbon Calculator. All rights reserved.</p>
+            <p className="text-gray-500 text-xs">Help reduce your carbon footprint • Make a difference for our planet</p>
+          </div>
         </div>
       </div>
     </div>

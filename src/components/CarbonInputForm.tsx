@@ -3,16 +3,18 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Zap, Car, Utensils } from "lucide-react";
+import { Zap, Car, Utensils, Calculator } from "lucide-react";
 import { CarbonData } from "@/pages/Index";
 
 interface CarbonInputFormProps {
   carbonData: CarbonData;
   setCarbonData: React.Dispatch<React.SetStateAction<CarbonData>>;
+  onCalculate?: () => void;
 }
 
-const CarbonInputForm: React.FC<CarbonInputFormProps> = ({ carbonData, setCarbonData }) => {
+const CarbonInputForm: React.FC<CarbonInputFormProps> = ({ carbonData, setCarbonData, onCalculate }) => {
   const handleInputChange = (field: keyof CarbonData, value: string) => {
     const numericValue = parseFloat(value) || 0;
     setCarbonData(prev => ({
@@ -182,6 +184,18 @@ const CarbonInputForm: React.FC<CarbonInputFormProps> = ({ carbonData, setCarbon
           </div>
         </CardContent>
       </Card>
+
+      {/* Calculate Button */}
+      <div className="flex justify-center pt-4">
+        <Button 
+          onClick={onCalculate}
+          size="lg"
+          className="bg-green-600 hover:bg-green-700 text-white px-8 py-3 text-lg"
+        >
+          <Calculator className="h-5 w-5 mr-2" />
+          Calculate My Carbon Footprint
+        </Button>
+      </div>
     </div>
   );
 };
